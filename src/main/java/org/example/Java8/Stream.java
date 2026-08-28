@@ -1,6 +1,7 @@
 package org.example.Java8;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Stream {
@@ -483,6 +484,61 @@ public class Stream {
         decendingReversed.forEach(System.out::println);
     }
 
+    void findSecondHighestNumberFromList(){
+        List<Integer> list = Arrays.asList(10, 20, 35, 50, 50, 22);
+        list.forEach(e -> System.out.println(e+" "));
+
+        //First Approach
+        Integer sorted = list.stream().sorted(Comparator.reverseOrder()).distinct().skip(1).findFirst().get();
+
+        System.out.print("sorted number is:-"+sorted);
+
+        //Second Approach
+       Optional<Integer> secondHighest = list.stream().distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst();
+       secondHighest.ifPresent(e -> System.out.println("secondHighest is:-"+e));
+    }
+
+    public void findAllDuplicateElementsInList(){
+        List<Integer> list = Arrays.asList(10, 15, 8, 49, 25, 98, 98, 32, 15);
+        Set<Integer> set = new HashSet<>();
+        List<Integer> duplicates = list.stream().filter(e -> !set.add(e)).collect(Collectors.toList());
+        duplicates.forEach(e -> System.out.print(e+" "));
+    }
+
+    public void countOccuranceOfEachCharector(){
+        String input = "gainjava";
+
+        //First Approach
+        Map<Character, Long> characterIntegerMap = input.chars().mapToObj(c ->(char) c).collect(Collectors.groupingBy(Character::charValue,Collectors.counting()));
+
+        for(Map.Entry<Character, Long> entry:characterIntegerMap.entrySet()){
+            System.out.println(entry.getKey()+" "+entry.getValue());
+        }
+        System.out.println("-------------");
+        //Second Approach
+       Map<String,Long> charCount = Arrays.stream(input.split("")).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+        for(Map.Entry<String,Long> entry:charCount.entrySet()){
+            System.out.println(entry.getKey()+" "+entry.getValue());
+        }
+    }
+
+    public void groupEmployeesbyDepartment(){
+        List<Employee> employees = List.of(
+                new Employee("shivraj","IT",30,25000),
+                new Employee("sam","Sales",45,21000),
+                new Employee("jane","HR",28,22000),
+                new Employee("Jhon","IT",38,27000),
+                new Employee("jane","HR",28,22000),
+                new Employee("jane","HR",28,22000)
+                );
+
+       Map<String,List<Employee>> groupEmployeesByDept = employees.stream().distinct().collect(Collectors.groupingBy(Employee::getDepartment));
+
+        for(Map.Entry<String,List<Employee>> entry:groupEmployeesByDept.entrySet()){
+            System.out.println(entry.getKey()+" "+entry.getValue());
+        }
+    }
+
     public static void main(String[] args) {
         Stream s = new Stream();
 
@@ -534,7 +590,11 @@ public class Stream {
       //  s.removeDuplicates();
         //s.removeDuplicatesManual();
         //s.ReverseStringJava8();
-        s.SortInReverseOrderThenReverseString();
+        //s.SortInReverseOrderThenReverseString();
+        //s.findSecondHighestNumberFromList();
+        //s.findAllDuplicateElementsInList();
+        //s.countOccuranceOfEachCharector();
+        s.groupEmployeesbyDepartment();
     }
 }
 
@@ -559,6 +619,38 @@ class Employee {
         this.name = name;
         this.age = age;
         this.department = department;
+        this.salary = salary;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
         this.salary = salary;
     }
 

@@ -10,8 +10,8 @@ public class QueueImplementationUsingLinkedlist {
         q.enqueue('c');
         q.iterateQueue();
         System.out.println(q.peek());
-        q.dequeue();
-        q.dequeue();
+        System.out.println("dequeued:-"+q.dequeue());
+        System.out.println("dequeued:-"+q.dequeue());
         q.iterateQueue();
 
     }
@@ -41,12 +41,17 @@ class QueueLL{
         this.length++;
     }
 
-    public void dequeue(){
+    public char dequeue(){
         if(isEmpty()){
             System.out.println("Queue is empty");
         }
-        this.front = this.front.next;
+        Node temp = this.front;
+        this.front = temp.next;
+        if(this.front == null){
+            this.rear = null;
+        }
         length--;
+        return temp.data;
     }
 
     public void iterateQueue(){

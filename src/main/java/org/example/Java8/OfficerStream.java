@@ -78,6 +78,52 @@ public class OfficerStream {
         mp.forEach((k,v) -> System.out.println(k + " : " + v));
     }
 
+    private static void getPartitionByAgeAndCountByDepartment(List<Officer> officers) {
+        Map<Boolean,Map<String,Long>> hm = officers.stream().collect(Collectors.partitioningBy(e -> e.age() > 30,Collectors.groupingBy(Officer::department,Collectors.counting())));
+        hm.forEach((k,v) -> System.out.println(k + " : " + v));
+    }
+
+    private static void getSortByAgeAndNullShouldBeLast(List<Officer> officers) {
+      List<Officer> sortedByManager = officers.stream().sorted(Comparator.comparing(Officer::managerId,Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
+      sortedByManager.forEach(System.out::println);
+    }
+
+    private static void getEmployeesByDepartmentInAscendingAndSalaryInDecendingOrder(List<Officer> officers) {
+      List<Officer> officer = officers.stream()
+              .sorted(Comparator.comparing(Officer::department)
+                      .thenComparing(Comparator.comparing(Officer::salary).reversed())).toList();
+
+      officer.forEach(System.out::println);
+    }
+
+    private static void getTotalSalary(List<Officer> officers) {
+      Double total = officers.stream().mapToDouble(Officer::salary).reduce(0.0,Double::sum);
+      System.out.println("total is:-"+total);
+    }
+
+    private static void getHighestPaidEmployeeUsingReduce(List<Officer> officers) {
+       Optional<Officer> highestPaid = officers.stream().reduce((e1,e2) -> e1.salary() > e2.salary() ? e1 : e2);
+        System.out.println(highestPaid);
+    }
+
+    private static void getNthHighestPaidEmployeePerDepartment(List<Officer> officers) {
+        int n = 2;
+       Map<String,List<Officer>> mp =  officers.stream()
+               .collect(Collectors.groupingBy(Officer::department))
+               .entrySet()
+               .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> entry.getValue()
+                                .stream()
+                                .sorted(Comparator.comparingDouble(Officer::salary)
+                                        .reversed())
+                                .skip(n-1)
+                                .limit(1)
+                                .collect(Collectors.toList())));
+       mp.forEach((k,v) -> System.out.println(k + " : " + v));
+    }
+
+
 
     void main(){
         List<Officer> officers = List.of(
@@ -125,7 +171,25 @@ public class OfficerStream {
         //getEmployeeNamesWhoJoinedAfter2018InEachDepartment(officers);
 
         //Q11. Split employees into salary >= 65000 vs < 65000.
-        getEmployeeBySalaryWithPartitioning(officers);
+       // getEmployeeBySalaryWithPartitioning(officers);
+
+       // Q12. Partition by "above 30" and, within each partition, count by department.
+        //getPartitionByAgeAndCountByDepartment(officers);
+
+        //Q13. Sort by department ascending, then salary descending.
+        //getEmployeesByDepartmentInAscendingAndSalaryInDecendingOrder(officers);
+
+        //Q14. Sort by age, nulls-safe on managerId (managers with no manager, i.e. null, should sort last).
+        //getSortByAgeAndNullShouldBeLast(officers); //This is a common trap since Comparator.comparing throws NPE on nulls.
+
+        //Q15. Total salary using reduce instead of mapToDouble.sum().
+        //getTotalSalary(officers);
+
+        //Q16. Find the highest-paid employee using reduce (not max).
+        //getHighestPaidEmployeeUsingReduce(officers);
+
+        //Q27. Nth highest-paid employee per department (e.g. 2nd highest in each dept) — combines grouping + sorting + skip/limit inside a downstream collector.
+        getNthHighestPaidEmployeePerDepartment(officers);
     }
 
 

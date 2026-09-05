@@ -1,6 +1,7 @@
 package org.example.DSA.tree;
 
-public class InOrder {
+public class PostOrder {
+
     static class TreeNode{
         char data;
         TreeNode left;
@@ -13,18 +14,17 @@ public class InOrder {
         }
     }
 
-    public static void inOrderNodeTraversal(TreeNode node){
+    public static TreeNode createNewNode(char data){
+        return new TreeNode(data);
+    }
+
+    private void postOrderNodeTraversal(TreeNode node) {
         if(node == null){
             return;
         }
-
-        inOrderNodeTraversal(node.left);
+        postOrderNodeTraversal(node.left);
+        postOrderNodeTraversal(node.right);
         System.out.print(node.data+", ");
-        inOrderNodeTraversal(node.right);
-    }
-
-    public static TreeNode createNewNode(char data){
-        return new TreeNode(data);
     }
 
     void main(){
@@ -47,8 +47,11 @@ public class InOrder {
         nodeB.right = nodeF;
 
         nodeF.left = nodeG;
-        System.out.println("PreOrder Traversal:");
-        inOrderNodeTraversal(root);
+
+        System.out.println("PostOrder traversal");
+        postOrderNodeTraversal(root);
     }
+
+
 
 }

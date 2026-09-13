@@ -123,6 +123,11 @@ public class OfficerStream {
        mp.forEach((k,v) -> System.out.println(k + " : " + v));
     }
 
+    private static void getOfficerByIdAndName(List<Officer> officers) {
+        Map<Integer, String> map = officers.stream().collect(Collectors.toMap(Officer::id,Officer::name));
+        map.forEach((k,v) -> System.out.println(k + " : " + v));
+    }
+
 
 
     void main(){
@@ -189,7 +194,10 @@ public class OfficerStream {
         //getHighestPaidEmployeeUsingReduce(officers);
 
         //Q27. Nth highest-paid employee per department (e.g. 2nd highest in each dept) — combines grouping + sorting + skip/limit inside a downstream collector.
-        getNthHighestPaidEmployeePerDepartment(officers);
+        //getNthHighestPaidEmployeePerDepartment(officers);
+
+        //Q28. Map of employee id → name.
+        getOfficerByIdAndName(officers);
     }
 
 
